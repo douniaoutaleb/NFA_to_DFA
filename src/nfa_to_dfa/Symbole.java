@@ -1,11 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Symbole.java
  */
 package nfa_to_dfa;
 
-import java.util.Objects;
 
 /**
  *
@@ -28,6 +25,11 @@ public class Symbole {
 
     public boolean equals(Symbole obj) {
         return this.valeur.equals(obj.valeur);
+    }
+
+    @Override
+    public String toString() {
+        return valeur ;
     }
 
     

@@ -17,48 +17,45 @@ public class NFA_to_DFA {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        ArrayList<Stat> Q = new ArrayList<Stat>();
+        ArrayList<Symbole> E = new ArrayList<Symbole>();
+        ArrayList<Stat> F = new ArrayList<Stat>();
+        
+        //entered automata with stat S0
+        Automata A = new Automata(new Stat("S0"));
+        
+        // adding stats of the automata
+        Q.add(new Stat("S1"));
+        Q.add(new Stat("S2"));
+        A.setQ(Q);
+        
+        // adding symboles of the automata
+        E.add(new Symbole("0"));
+        E.add(new Symbole("1"));
+        E.add(new Symbole("epsilon"));
+        A.setE(E);
+        
+        // adding transitions of the automata
+        Hashtable<Symbole, CoupleStat> t = new Hashtable<Symbole, CoupleStat>();
+        t.put(new Symbole("0"), new CoupleStat(new Stat("S0"),new Stat("S0")));
+        t.put(new Symbole("0"), new CoupleStat(new Stat("S0"),new Stat("S1")));
+        t.put(new Symbole("epsilon"), new CoupleStat(new Stat("S1"),new Stat("S2")));
+        t.put(new Symbole("1"), new CoupleStat(new Stat("S0"),new Stat("S0")));
+        t.put(new Symbole("1"), new CoupleStat(new Stat("S1"),new Stat("S2")));
+        Transitions T = new Transitions(t);
+        A.setT(T);
+        
+        // adding the final stat/stats
+        F.add(new Stat("S2"));
+        A.setF(F);
+        
+        // print automata
+        A.AfficheAuto();
+        
+        // convert automata and print results
+        A.Convertepsilon().AfficheAuto();
         
     }
     
-    public static Automata Convert(Automata NFA) {
-        
-        // initialising the first stat of the DFA 
-        Automata DFA;
-        DFA = new Automata(NFA.getQ0());
-        
-        // initialising a temporary set of new states formed by subsets of states of Q
-        PileStat Temp = null;
-        Temp.empiler(NFA.getQ0());
-        
-        //loop
-        while(!Temp.estVide())
-        {
-            Stat t = Temp.depiler();
-            for(Symbole s:NFA.getE())
-            {
-                if(NFA.getT().checkTrans(t, s))
-                {
-                    Iterator<Symbole> it = NFA.getT().getTransitions(t, s).keySet().iterator();
-                    Hashtable<Symbole, CoupleStat> n;
-                    n = NFA.getT().getTransitions(t, s);
-                    while(it.hasNext())
-                    { 
-                        Symbole key = it.next(); 
-                        CoupleStat d = n.get(key); 
-                        if(!DFA.getQ().contains(d.getEtat2()))
-                        {
-                            DFA.getQ().add(new Stat(d.getEtat2()));
-                            Temp.empiler(new Stat(d.getEtat2()));
-                            DFA.getT().createTrans(key, d);
-                        }
-                    }
-                }
-            }
-        }
-        
-        
-        return DFA;
-        
-    }
     
 }

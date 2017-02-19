@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * PileStat.java
  */
 package nfa_to_dfa;
 
@@ -9,36 +7,47 @@ package nfa_to_dfa;
  *
  * @author DO
  */
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class PileStat {
 	
-	private Vector<Stat> pile = new Vector<Stat>();
+        /**
+         * pile last in first out
+         */
+	private ArrayList<Stat> pile = new ArrayList<Stat>();
 	
+        /**
+         * push method
+         * @param n 
+         */
 	public void empiler(Stat n)
 	{
-		pile.addElement(n);
+            pile.add(n);
 	}
 	
+        /**
+         * pop method
+         * @return 
+         */
 	public Stat depiler()
 	{
-            Stat a = pile.get(pile.size()-1);
-            pile.remove(pile.get(pile.size()-1));
-            return a;
+            if(!pile.isEmpty())
+            {
+                Stat a = pile.get(pile.size()-1);
+                boolean remove = pile.remove(pile.get((pile.size())-1));
+                return a;
+            }
+            else
+            {
+                return null;
+            }
+            
 	}
 	
 	public boolean estVide()
 	{
-		if(pile.size()==0)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+            return pile.isEmpty();
 	}
-	
-	
+
 
 }
