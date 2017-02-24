@@ -53,6 +53,18 @@ public class Transitions {
 		System.out.println("({" + c.getEtat1()+ "}," + key + ",{" +c.getEtat2() +"})"); 
 	} 
     }
+	 
+     public String toString (){
+        String a = "T=";
+        Iterator<Symbole> it = Table.keySet().iterator();
+	while(it.hasNext())
+	{ 
+		Symbole key = it.next(); 
+		CoupleStat c = Table.get(key); 
+		a += "({" + c.getEtat1()+ "}," + key + ",{" +c.getEtat2() +"})\n"; 
+	} 
+        return a ; 
+    }
     
     /**
      * Method that tells if a transition(a,c) is present in the automata
