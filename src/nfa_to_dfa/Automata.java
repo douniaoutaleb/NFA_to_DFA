@@ -30,6 +30,18 @@ public class Automata {
         for(Stat a:F){System.out.println("{"+a.toString()+"} ");} 
         this.T.AfficheTrans();
     }
+    
+    public String toString(){
+        String t = "Automata: qo="+q0.toString();
+        t += "\n Q=";
+        for(Stat a:Q){ t+= "{"+a.toString()+"} ";} 
+        t += "\n E= | ";
+        for(Symbole a:E){t += a.toString()+" | ";} 
+        t += "\n F=";
+        for(Stat a:F){t += "{"+a.toString()+"} ";} 
+        t += this.T.toString();
+        return t;
+    }
 
     public Automata(Stat q0) {
         this.q0 = q0;
