@@ -12,8 +12,9 @@ import java.util.ArrayList;
 public class Stat {
     private ArrayList<String> valeur;
 
-    
-
+    /**
+     * Stat constructers
+     */
     public Stat() {
         this.valeur = new ArrayList<String>();
     }
@@ -23,10 +24,14 @@ public class Stat {
         this.valeur.add(valeur);
     }
 
+    /**
+     * toString method
+     * @return 
+     */
     @Override
     public String toString() {
         String a = "";
-        for(int i = 0;i<this.valeur.size()-1;i++)
+        for(int i = 0;i<(this.valeur.size())-1;i++)
         {
             a+=this.valeur.get(i)+",";
         }
@@ -34,6 +39,10 @@ public class Stat {
         return a;
     }
 
+    /**
+     * getter and setter
+     * @return 
+     */
     public ArrayList<String> getValeur() {
         return valeur;
     }
@@ -42,6 +51,12 @@ public class Stat {
         this.valeur = valeur;
     }
 
+    /**
+     * method equals
+     * 
+     * @param obj
+     * @return 
+     */
     public boolean equals(Stat obj) {
         if(obj==null)
         {
@@ -73,9 +88,27 @@ public class Stat {
         
     }
     
+    /**
+     * customised method adding for the stat elements to another stat
+     * Concatenate the stat object and the enterred String
+     * 
+     * @param a 
+     */
     public void ajout(String a)
     {
-        this.valeur.add(a);
+        for(String h:a.split(","))
+            this.valeur.add(h);
     }
     
+    /**
+     * method checking if a String is contained in the stat's elements
+     * 
+     * @param a
+     * @return 
+     */
+    public boolean contient(String a)
+    {
+        return this.toString().contains(a);
+    }
+
 }

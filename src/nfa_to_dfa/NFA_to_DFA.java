@@ -27,6 +27,8 @@ public class NFA_to_DFA {
         // adding stats of the automata
         Q.add(new Stat("S1"));
         Q.add(new Stat("S2"));
+        Q.add(new Stat("S3"));
+        Q.add(new Stat("S4"));
         A.setQ(Q);
         
         // adding symboles of the automata
@@ -37,23 +39,25 @@ public class NFA_to_DFA {
         
         // adding transitions of the automata
         Hashtable<Symbole, CoupleStat> t = new Hashtable<Symbole, CoupleStat>();
-        t.put(new Symbole("0"), new CoupleStat(new Stat("S0"),new Stat("S0")));
+        t.put(new Symbole("1"), new CoupleStat(new Stat("S2"),new Stat("S3")));
+        t.put(new Symbole("0"), new CoupleStat(new Stat("S2"),new Stat("S3")));
         t.put(new Symbole("0"), new CoupleStat(new Stat("S0"),new Stat("S1")));
         t.put(new Symbole("epsilon"), new CoupleStat(new Stat("S1"),new Stat("S2")));
-        t.put(new Symbole("1"), new CoupleStat(new Stat("S0"),new Stat("S0")));
-        t.put(new Symbole("1"), new CoupleStat(new Stat("S1"),new Stat("S2")));
+        t.put(new Symbole("epsilon"), new CoupleStat(new Stat("S1"),new Stat("S4")));
+        t.put(new Symbole("epsilon"), new CoupleStat(new Stat("S3"),new Stat("S4")));
+        t.put(new Symbole("epsilon"), new CoupleStat(new Stat("S3"),new Stat("S2")));
         Transitions T = new Transitions(t);
         A.setT(T);
         
         // adding the final stat/stats
-        F.add(new Stat("S2"));
+        F.add(new Stat("S4"));
         A.setF(F);
         
         // print automata
         A.AfficheAuto();
         
         // convert automata and print results
-        A.Convertepsilon().AfficheAuto();
+        A.ConvertEpsilon().AfficheAuto();
         
     }
     

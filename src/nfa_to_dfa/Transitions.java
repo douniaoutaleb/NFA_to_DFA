@@ -15,6 +15,9 @@ public class Transitions {
 
     private Hashtable<Symbole, CoupleStat> Table ;
     
+    /**
+     * constructors
+     */
     public Transitions() {
         Table =  new Hashtable<Symbole, CoupleStat>();
     }
@@ -23,6 +26,15 @@ public class Transitions {
         this.Table = t;
     }
 
+    /**
+     * getter
+     * @return 
+     */
+    public Hashtable<Symbole, CoupleStat> getTable() {
+        return Table;
+    }
+
+    
     /**
      * the following method creates a transition based on the entered parameters
      * @param c
@@ -53,8 +65,12 @@ public class Transitions {
 		System.out.println("({" + c.getEtat1()+ "}," + key + ",{" +c.getEtat2() +"})"); 
 	} 
     }
-	 
-     public String toString (){
+    
+    /**
+     * the following method returns the table transitions into String
+     * @return 
+     */
+    public String toString (){
         String a = "T=";
         Iterator<Symbole> it = Table.keySet().iterator();
 	while(it.hasNext())
@@ -80,7 +96,7 @@ public class Transitions {
 	{ 
             Symbole key = it.next(); 
             CoupleStat d = Table.get(key); 
-            if(key.equals(c) && d.getEtat1().equals(a) && t == false)
+            if(key.equals(c) && d.getEtat1().toString().equals(a.toString()) && t == false)
             {
                 t = true;
             }
@@ -125,7 +141,8 @@ public class Transitions {
      * @param c
      * @return 
      */
-    public Stat getStatTrans1( Stat a, Symbole c)
+   
+    public Stat getStatTrans( Stat a, Symbole c)
     {
         Stat t = new Stat();
         Iterator<Symbole> it = Table.keySet().iterator();
@@ -135,64 +152,25 @@ public class Transitions {
             CoupleStat d = Table.get(key); 
             for(String r:a.getValeur())
             {
-                String[] parts = r.split(",");
-                for(String o:parts)
-                    for(String u:d.getEtat1().getValeur())
+                for(String u:d.getEtat1().getValeur())
+                {
+                    if(key.equals(c) && r.equals(u))
                     {
-                        if(key.equals(c) && o.equals(u))
+                        boolean e = false;
+                        for(String h:t.getValeur())
                         {
-                            t.ajout(d.getEtat2().toString());
+                            if(h.equals(d.getEtat2().toString()))
+                               e=true;
                         }
-                    }
+                
+                        if(!e)
+                        {t.ajout(d.getEtat2().toString());}
+                            
+                    }    
+                }
             }
             
 	}
         return t;
     }
-    
-    
-     /**
-     * epsilonFermeture(a) is a method that returns a stat that contains 
-     * 'a' plus the stats of the NFA accessible only by 
-     * epsilon transitions from the stat 'a'
-     * @param a
-     * @return 
-     */
-    public Stat epsilonFermeture(Stat a)
-    {
-        Stat t = this.getStatTrans1(a, new Symbole("epsilon")); 
-        boolean b = false;
-        for(String o:t.getValeur())
-        {
-            if(o.equals(a.toString()))
-            {
-                b = true;
-            }
-        }
-        if(!b)
-        {
-            for(String u:a.getValeur())
-            {
-                t.ajout(u);
-            }
-        }
-        return t;
-    }
-    
-    /**
-     * epsilonFermetureEns(a) is a method that returns an array 
-     * which contains the union of epsilonFermeture(each_stat_of_a)
-     * @param a
-     * @return 
-     */
-    public Stat epsilonFermetureEns(Stat a)
-    {
-        Stat t = new Stat();
-        for(String o:a.getValeur())
-        {
-            t.ajout(this.epsilonFermeture(new Stat(o)).toString());
-        } 
-        return t;
-    }
-    
 }

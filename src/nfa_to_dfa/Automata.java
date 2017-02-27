@@ -4,6 +4,7 @@
 package nfa_to_dfa;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -18,6 +19,9 @@ public class Automata {
     private Stat q0;
     private ArrayList<Stat> F = new ArrayList<Stat>();
 
+    /**
+     * visualising the automata
+     */
     public void AfficheAuto(){
         System.out.println("Automata: qo="+q0.toString());
         System.out.print("Q=");
@@ -27,10 +31,15 @@ public class Automata {
         for(Symbole a:E){System.out.print(a.toString()+" | ");} 
         System.out.println();
         System.out.print("F=");
-        for(Stat a:F){System.out.println("{"+a.toString()+"} ");} 
+        for(Stat a:F){System.out.print("{"+a.toString()+"} ");} 
+        System.out.println();
         this.T.AfficheTrans();
     }
     
+    /**
+     * returning the automata as a string
+     * @return 
+     */
     public String toString(){
         String t = "Automata: qo="+q0.toString();
         t += "\n Q=";
@@ -43,17 +52,25 @@ public class Automata {
         return t;
     }
 
+    /**
+     * initialising the automata
+     * @param q0 
+     */
     public Automata(Stat q0) {
         this.q0 = q0;
     }
 
+    /**
+     * getters and setters for the automata's elements
+     * @return 
+     */
     public ArrayList<Stat> getQ() {
         return Q;
     }
 
     public void setQ(ArrayList<Stat> Q) {
-        this.Q = Q;
         this.Q.add(q0);
+        this.Q.addAll(Q);
     }
 
     public ArrayList<Symbole> getE() {
@@ -81,23 +98,6 @@ public class Automata {
         this.q0 = q0;
     }
     
-    public boolean Qcontient(Stat q)
-    {
-        boolean t = false;int i = 0;
-        while(!t && i<Q.size())
-        {
-            if(Q.get(i).equals(q))
-            {
-                t = true;
-            }
-            else
-            {
-                i++;
-            }
-        }
-        return t;
-    }
-
     public ArrayList<Stat> getF() {
         return F;
     }
@@ -108,73 +108,124 @@ public class Automata {
 
     
     /**
-     * This Method converts an NFA containing epsilon transitions
-     * into a DFA
+     * factorial function 
+     * @param N
+     * @return 
      */
-    public Automata Convertepsilon() {
+    public static long factorial(int N)
+    {
+        long multi = 1;
+        for (int i = 1; i <= N; i++) {
+            multi = multi * i;
+        }
+        return multi;
+    }
+    
+    /**
+     * method checking if a the Stat set of the automata contains a certain stat
+     * personnalised "contains()":
+     * it checks if a stat(no matter how its components are organised) is indeed
+     * in the Stats set
+     * 
+     * @param q
+     * @return 
+     */
+    public boolean Qcontient(Stat q)
+    {
+        boolean t = false;int i = 0; int j = 0;
+        
+        while(!t && i<this.Q.size())
+        {
+            Stat m = this.Q.get(i);
             
-        // initialising the first stat of the DFA 
+            if(m.equals(q))
+            {
+                t = true;
+            }
+            else
+            {
+                Collections.shuffle(m.getValeur());
+                j++;if(j==factorial(q.getValeur().size())){i++;j=0;}
+            }
+            
+        }
+        return t;
+    }
+
+    
+        
+    //this method only convert an NFA with no epsilon transition 
+    public Automata Convert() {
+        
+        //initialising the first stat of the DFA 
         Automata DFA;
         DFA = new Automata(this.q0);
         DFA.Q.add(this.q0);
         
-        // initialising a temporary set of new states formed by subsets of states of Q
+        //initialising a temporary set of new states formed by subsets of states of Q
         PileStat Temp = new PileStat();
         Temp.empiler(this.q0);
         
         //loop
         while(!Temp.estVide())
-        {
+        { 
             Stat t = Temp.depiler();
             for(Symbole s:this.E)
             {
-                if(t!= null && this.T.checkTrans(t, s))
+                if(t!=null && this.T.checkTrans(t, s))
                 {
+                    
                     /**
                      * getting the transitions formed by t and s
                      */
-                    // i need to get epsilon fermeture of those trans
-                    Stat e = this.T.epsilonFermetureEns(this.T.getStatTrans1(t, s));
-                    
+                     
+                    Stat k = this.T.getStatTrans(t, s);
                     /**
                      * checking if our DFA contains already the stat
                      * produced by t and s
                      */
-                    if(!DFA.Qcontient(e))
+                     
+                    if(!DFA.Qcontient(k))
                     {
+                        
                         /**
                          * in case it doesn't contain the stat 
                          * we add that stat to the DFA stat table
                          * and to the temporary table
                          * (we use getEtat2 because getEtat1 reffers to t) 
                          */
-                        DFA.Q.add(e);
-                        Temp.empiler(e);
-                        /**
-                         * and we create transition formed by t and Etat2
-                         * in the DFA
-                         */
-                    }
+                         
+                        DFA.Q.add(k);
+                        Temp.empiler(k);
+                    }   
+                    
+                    /**
+                     * and we create transition formed by t and Etat2
+                     * in the DFA
+                     */
+                     
                     if(!DFA.T.checkTrans1(t, s))
                     {
-                        DFA.T.createTrans(s, new CoupleStat(t,e));
-                        if(!DFA.E.contains(s) && !s.equals(new Symbole("epsilon")))
+                        DFA.T.createTrans(s, new CoupleStat(t,k));
+                        if(!DFA.E.contains(s))
                         {
                             DFA.E.add(s);
                         }
                     }
                     
                 }
+                
             }
         }
         
-        // filling the table of final stats of the DFA
+        
+        //filling the table of final stats of the DFA
         for(Stat o:DFA.Q)
         {
             int i = 0;
             while(i<this.F.size())
             {
-                if(o.getValeur().contains(this.F.get(i).toString()))
+                if(o.getValeur().contains(this.F.get(i).toString()) && !DFA.F.contains(o))
                 {
                     DFA.F.add(o);
                     i++;
@@ -189,5 +240,97 @@ public class Automata {
         return DFA;
         
     }
+    
  
+       
+    
+    /**
+     * This Method converts an NFA containing epsilon transitions
+     * into a DFA using the method above
+     */
+    public Automata ConvertEpsilon() {
+        
+        //initialising the first stat of the DFA 
+        Automata DFA;
+        DFA = new Automata(this.q0);
+        DFA.Q.add(this.q0);
+        
+        //initialising a temporary set of new states formed by subsets of states of Q
+        PileStat Temp = new PileStat();
+        Temp.empiler(this.q0);
+        
+        //loop
+        for(int i = 0 ; i <this.Q.size() ; i++)
+        { 
+            Stat t =this.Q.get(i);
+            if(this.T.checkTrans(t, new Symbole("epsilon")))
+                {
+                    //getting the transitions formed by t and epsilon and deleting them
+                     //first group the epsilon stats
+                    Stat k = this.T.getStatTrans(t, new Symbole("epsilon"));
+                    
+                    for(Stat o:this.Q)
+                    {
+                        if(o.equals(t))
+                        {
+                            o.ajout(k.toString());
+                        }
+                    }
+                    
+                    //group them in the transitions
+                    Iterator<Symbole> it = this.T.getTable().keySet().iterator();
+                    while(it.hasNext() )
+                    { 
+                	Symbole key = it.next(); 
+                        CoupleStat c = this.T.getTable().get(key); 
+                        if(t.getValeur().get(0).equals(c.getEtat1().toString()) )
+                        {
+                            c.getEtat1().ajout(k.toString());
+                        }
+                        if(t.getValeur().get(0).equals(c.getEtat2().toString()) )
+                        {
+                            c.getEtat2().ajout(k.toString());
+                        }
+                    }
+                    
+                    //remove the epsilon trans
+                    for(int p = 0;p<this.T.getTable().size();p++)
+                    {
+                        it = this.T.getTable().keySet().iterator();
+                        boolean y = false;
+                        while(it.hasNext() && !y)
+                        { 
+                            Symbole key = it.next(); 
+                            CoupleStat c = this.T.getTable().get(key); 
+                            if(t.contient(c.getEtat1().toString()) && key.equals(new Symbole("epsilon")))
+                            {
+                                this.T.getTable().remove(key);
+                                y = true;
+                            }
+                        }   
+                    }
+                    
+                    //remove the epsilon symbole
+                    int l = 0;boolean p = false;
+                    while(l<this.E.size() && !p)
+                    {
+                        Symbole e = this.E.get(l);
+                        if(e.equals(new Symbole("epsilon")))
+                        {
+                            this.E.remove(e);
+                            p = true;
+                        }
+                        else
+                        {
+                            l++;
+                        }
+                    }
+                    
+                }
+        }
+        
+        DFA = this.Convert();
+        return DFA;
+        
+    }
 }
