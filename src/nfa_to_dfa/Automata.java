@@ -339,7 +339,6 @@ public class Automata {
                     
                 }
         }
-        this.AfficheAuto();
         DFA = this.Convert();
         return DFA;
         
