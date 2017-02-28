@@ -180,6 +180,17 @@ public class Automata {
                      */
                      
                     Stat k = this.T.getStatTrans(t, s);
+                    for(int l= 0; l<k.getValeur().size();l++)
+                    {
+                        for(int m=0; m<k.getValeur().size();m++)
+                        {
+                            if(k.getValeur().get(m).equals(k.getValeur().get(l)) && l!=m)
+                            {
+                                k.getValeur().remove(k.getValeur().get(m));
+                                l=m=0;
+                            }
+                        }
+                    }
                     /**
                      * checking if our DFA contains already the stat
                      * produced by t and s
@@ -328,7 +339,7 @@ public class Automata {
                     
                 }
         }
-        
+        this.AfficheAuto();
         DFA = this.Convert();
         return DFA;
         
